@@ -5,7 +5,7 @@ Based on https://github.com/jciolek/docker-protractor-headless
 # Usage
 
 ```
-docker run -it --privileged --rm --net=host -v /dev/shm:/dev/shm -v $(pwd):/protractor shusson/chrome-tester [commands to run in xvbf]
+docker run -it --privileged --rm --net=host -v /dev/shm:/dev/shm -v $(pwd):/tests shusson/chrome-tester [commands to run in xvbf]
 ```
 
 ## Why mapping `/dev/shm`?
