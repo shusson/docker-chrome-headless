@@ -1,33 +1,11 @@
-# Docker image of Protractor with headless Chrome
+# Docker image for running tests (karma, protractor) against Chrome inside xvbf
 
-Protractor end to end testing for AngularJS - dockerised with headless real Chrome.
-
-## Why headless Chrome?
-
-PhantomJS is [discouraged by Protractor creators](https://angular.github.io/protractor/#/browser-setup#setting-up-phantomjs) and for a good reason. It's basically a bag of problems. 
-
-## What is headless Chrome anyway?
-
-To be perfectly honest - it is a [real chrome running on xvfb](http://tobyho.com/2015/01/09/headless-browser-testing-xvfb/). Therefore you have every confidence that the tests are run on the real thing.
+Based on https://github.com/jciolek/docker-protractor-headless
 
 # Usage
 
 ```
-docker run -it --privileged --rm --net=host -v /dev/shm:/dev/shm -v $(pwd):/protractor webnicer/protractor-headless [protractor options]
-```
-
-This will run protractor in your current directory, so you should run it in your tests root directory. It is useful to create a script, for example /usr/local/bin/protractor.sh such as this:
-
-```
-#!/bin/bash
-
-docker run -it --privileged --rm --net=host -v /dev/shm:/dev/shm -v $(pwd):/protractor webnicer/protractor-headless $@
-```
-
-The script will allow you to run dockerised protractor like so:
-
-```
-protractor.sh [protractor options]
+docker run -it --privileged --rm --net=host -v /dev/shm:/dev/shm -v $(pwd):/protractor shusson/chrome-tester [commands to run in xvbf]
 ```
 
 ## Why mapping `/dev/shm`?
@@ -46,6 +24,13 @@ The [`--privileged`](https://docs.docker.com/engine/reference/run/#runtime-privi
 
 ## Why `--net=host`?
 
-This options is required **only** if the dockerised Protractor is run against localhost on the host. Imagine this sscenario: you run an http test server on your local machine, let's say on port 8000. You type in your browser `http://localhost:8000` and everything goes smoothly. Then you want to run the dockerised Protractor against the same localhost:8000. If you don't use `--net=host` the container will receive the bridged interface and its own loopback and so the `localhost` within the container will refer to the container itself. Using `--net=host` you allow the container to share host's network stack and properly refer to the host when Protractor is run against `localhost`.
+This options is required **only** if the dockerised command requires a connection to the localhost on the host. Imagine this sscenario: you run an http test server on your local machine, let's say on port 8000. You type in your browser `http://localhost:8000` and everything goes smoothly. Then you want to run the dockerised Protractor against the same localhost:8000. If you don't use `--net=host` the container will receive the bridged interface and its own loopback and so the `localhost` within the container will refer to the container itself. Using `--net=host` you allow the container to share host's network stack and properly refer to the host when Protractor is run against `localhost`.
 
+## `docker for mac` WARNING:
+If you are using `docker for mac` you will have to manually tell the container how to connect to the host
+see (https://forums.docker.com/t/access-host-not-vm-from-inside-container/11747/10)
 
+    For example:
+    $ sudo ifconfig lo0 alias 10.200.10.1/24
+    $ docker run -it --rm --privileged --net=host --add-host=docker.local:10.200.10.1 -v /dev/shm:/dev/shm \
+      -v $(pwd):/protractor shusson/chrome-tester --baseUrl='http://docker.local:5013'
