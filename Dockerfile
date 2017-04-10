@@ -1,9 +1,10 @@
-FROM node:slim
+FROM openjdk:8-jre
 
 MAINTAINER shane.a.husson@gmail.com
 
-RUN apt-get update && \
-    apt-get install -y xvfb wget openjdk-7-jre && \
+RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - && \
+    apt-get update && \
+    apt-get install -y xvfb wget nodejs && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     dpkg --unpack google-chrome-stable_current_amd64.deb && \
     apt-get install -f -y && \
