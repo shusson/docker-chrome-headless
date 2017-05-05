@@ -32,5 +32,4 @@ see (https://forums.docker.com/t/access-host-not-vm-from-inside-container/11747/
 
     For example:
     $ sudo ifconfig lo0 alias 10.200.10.1/24
-    $ docker run -it --rm --privileged --net=host --add-host=docker.local:10.200.10.1 -v /dev/shm:/dev/shm \
-      -v $(pwd):/tests shusson/chrome-tester --baseUrl='http://docker.local:5013'
+    $ docker run -it --rm --privileged --net=host --add-host=docker.local:10.200.10.1 -v /dev/shm:/dev/shm -v $(pwd):/tests shusson/chrome-tester protractor --baseUrl='http://docker.local:5013'
